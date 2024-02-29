@@ -1,12 +1,12 @@
 ignore_merge_commits = true
-branch_whitelist = ["master", "staging"]
+branch_whitelist = ["main"]
 pre_bump_hooks = []
 post_bump_hooks = []
 tag_prefix = "v"
 
 [commit_types]
-chore = { changelog_title = "Chore" }
-ci = { changelog_title = "CI" }
+chore = { changelog_title = "Chore", omit_from_changelog = true }
+ci = { changelog_title = "CI", omit_from_changelog = true }
 
 [changelog]
 path = "CHANGELOG.md"

@@ -20,6 +20,6 @@ class LaravelTwoFactorServiceProvider extends PackageServiceProvider
             ->hasViews()
             ->hasRoute('web')
             ->hasRoute('api')
-            ->hasMigration('create_laravel_two_factor_table');
+            ->hasMigration('add_two_factor_column_to_users');
     }
 }

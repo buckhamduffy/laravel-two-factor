@@ -1,3 +1,11 @@
-# Changelog
+## Unreleased (8077b87..8077b87)
+#### Bug Fixes
+- correct migration name - (8077b87) - Aaron Florey
 
-All notable changes to `laravel-two-factor` will be documented in this file.
+- - -
+
+## v0.0.1 - 2024-02-29
+#### Features
+- initial commit - (2c42812) - Aaron Florey
+
+
