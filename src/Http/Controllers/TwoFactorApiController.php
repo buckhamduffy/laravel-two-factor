@@ -33,6 +33,7 @@ class TwoFactorApiController extends Controller
                 'authenticator' => config('two-factor.enable.authenticator'),
                 'email'         => config('two-factor.enable.email'),
                 'sms'           => config('two-factor.enable.sms'),
+                'recovery_codes' => config('two-factor.enable.recovery_codes')
             ]
         ]);
     }

@@ -19,14 +19,16 @@
                 authentication. You may retrieve this token from your phone's Authenticator application or Email Inbox (if enabled).
             </p>
 
-            <div v-if="recoveryCodes" class="mt-5">
-                <p>Here are your recovery codes, if you get locked out of your account you may use one to get back in.</p>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="row">
-                            <div v-for="code in recoveryCodes" class="col-6">
-                                <div class="p-3">
-                                    {{ code }}
+            <div v-if="isEnabled">
+                <div v-if="recoveryCodes" class="mt-5">
+                    <p>Here are your recovery codes, if you get locked out of your account you may use one to get back in.</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div v-for="code in recoveryCodes" class="col-6">
+                                    <div class="p-3">
+                                        {{ code }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -64,6 +66,11 @@
                         <b-form-group>
                             <b-button type="submit" variant="primary">
                                 Confirm Authenticator
+                            </b-button>
+
+                            <b-button variant="danger" class="ml-2"
+                                      @click="setTwoFactor('authenticator', false)">
+                                Cancel
                             </b-button>
                         </b-form-group>
                     </b-form>
@@ -123,9 +130,10 @@ export default {
                 enforce: false,
                 recently_enabled: false,
                 types: {
-                    email: true,
-                    sms: true,
-                    authenticator: true,
+                    email: false,
+                    sms: false,
+                    authenticator: false,
+                    recovery_codes: false,
                 }
             },
             confirmation: {
@@ -138,7 +146,7 @@ export default {
     },
     computed: {
         isEnabled() {
-            if(this.twoFactorSettings.enforce) {
+            if (this.twoFactorSettings.enforce) {
                 return true
             }
 
@@ -156,18 +164,18 @@ export default {
                 .then((rsp) => {
                     this.twoFactorSettings = rsp.data
 
-                    if(this.twoFactorSettings.authenticator && !this.twoFactorSettings.authenticator_confirmed) {
+                    if (this.twoFactorSettings.authenticator && !this.twoFactorSettings.authenticator_confirmed) {
                         this.fetchSecretKey()
                         this.fetchQrCode()
                     }
 
-                    if(this.twoFactorSettings.recently_enabled) {
+                    if (this.twoFactorSettings.recently_enabled) {
                         this.fetchRecoveryCodes()
                     }
                 }).catch((err) => {
                     toastr.error(err.response.data.message)
                 }).finally(() => {
-                    this.loading =false
+                    this.loading = false
                 })
         },
         setTwoFactor(key, value) {
@@ -183,7 +191,7 @@ export default {
 
             return axios.put('/api/two-factor', data)
                 .then(() => {
-                    if(key === 'authenticator' && value) {
+                    if (key === 'authenticator' && value) {
                         Promise.all([
                             this.fetchSecretKey(),
                             this.fetchQrCode(),
@@ -208,9 +216,19 @@ export default {
             })
         },
         fetchRecoveryCodes() {
-            return axios.get('/api/two-factor/show-recovery-codes').then((rsp) => {
-                this.recoveryCodes = rsp.data.codes
+            return new Promise((resolve) => {
+                if(!this.twoFactorSettings.types.recovery_codes) {
+                    this.recoveryCodes = null;
+                    return resolve()
+                }
+
+                return axios.get('/api/two-factor/show-recovery-codes').then((rsp) => {
+                    this.recoveryCodes = rsp.data.codes
+                }).finally(() => {
+                    resolve()
+                })
             })
+
         },
         confirmAuthenticator() {
             this.loading = true
