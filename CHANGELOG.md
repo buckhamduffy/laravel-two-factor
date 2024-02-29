@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.3 - 2024-02-29
+#### Bug Fixes
+- allow recovery codes when enabled - (0d4145a) - Aaron Florey
+
+- - -
+
 ## v0.1.2 - 2024-02-29
 #### Bug Fixes
 - put api under web middleware for sessions - (5843dad) - Aaron Florey
