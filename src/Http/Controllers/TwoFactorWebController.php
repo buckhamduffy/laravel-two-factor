@@ -38,6 +38,30 @@ class TwoFactorWebController extends Controller
             ->with('settings', $user->two_factor_settings);
     }
 
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'code' => ['required', 'string'],
+            'type' => ['required', 'in:sms,email,authenticator'],
+        ]);
+
+        $type = $request->get('type');
+        $code = (string) $request->get('code');
+
+        /** @var HasTwoFactorInterface $user */
+        $user = $request->user();
+
+        if (!$this->twoFactorService->verify($code, $user, $type)) {
+            throw ValidationException::withMessages([
+                'code' => 'This code does not match.'
+            ]);
+        }
+
+        session()->put('is_two_factor_confirmed', true);
+
+        return redirect()->to(config('two-factor.redirect_to'));
+    }
+
     public function showRecovery(): View
     {
         if (!config('two-factor.enable.recovery_codes')) {
@@ -71,37 +95,6 @@ class TwoFactorWebController extends Controller
         throw ValidationException::withMessages([
             'code' => 'This code does not match.'
         ]);
-    }
-
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'code' => ['required', 'string'],
-            'type' => ['required', 'in:sms,email,authenticator'],
-        ]);
-
-        $type = $request->get('type');
-        $code = (string) $request->get('code');
-
-        /** @var HasTwoFactorInterface $user */
-        $user = $request->user();
-
-        if (!$this->twoFactorService->verify($code, $user, $type)) {
-            throw ValidationException::withMessages([
-                'code' => 'This code does not match.'
-            ]);
-        }
-
-        if ($type === 'email') {
-            $user->two_factor_settings = $user->two_factor_settings
-                ->setEmailCode(null)
-                ->setLastEmailSent(null);
-            $user->save();
-        }
-
-        session()->put('is_two_factor_confirmed', true);
-
-        return redirect()->to(config('two-factor.redirect_to'));
     }
 
     public function resend(Request $request): RedirectResponse

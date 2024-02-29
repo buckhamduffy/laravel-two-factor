@@ -18,7 +18,7 @@ class TwoFactorApiController extends Controller
     public function show(Request $request): JsonResponse
     {
         /** @var HasTwoFactorInterface $user */
-        $user = $request->user('api');
+        $user = $request->user();
 
         return response()->json([
             'can_enable'              => $user->canUseTwoFactor(),
@@ -30,9 +30,9 @@ class TwoFactorApiController extends Controller
             'authenticator_confirmed' => $user->two_factor_settings->isConfirmed(),
             'recently_enabled'        => $user->two_factor_settings->wasRecentlyEnabled(),
             'types'                   => [
-                'authenticator' => config('two-factor.enable.authenticator'),
-                'email'         => config('two-factor.enable.email'),
-                'sms'           => config('two-factor.enable.sms'),
+                'authenticator'  => config('two-factor.enable.authenticator'),
+                'email'          => config('two-factor.enable.email'),
+                'sms'            => config('two-factor.enable.sms'),
                 'recovery_codes' => config('two-factor.enable.recovery_codes')
             ]
         ]);
@@ -41,7 +41,7 @@ class TwoFactorApiController extends Controller
     public function update(Request $request): void
     {
         /** @var HasTwoFactorInterface $user */
-        $user = $request->user('api');
+        $user = $request->user();
 
         $request->validate([
             'sms'           => ['nullable', 'boolean'],
@@ -62,7 +62,7 @@ class TwoFactorApiController extends Controller
     public function showSecret(Request $request): JsonResponse
     {
         /** @var HasTwoFactorInterface $user */
-        $user = $request->user('api');
+        $user = $request->user();
 
         if (!$user->two_factor_settings->isAuthenticator()) {
             return response()->json(['message' => 'Two factor authentication is not enabled'], 400);
@@ -76,7 +76,7 @@ class TwoFactorApiController extends Controller
     public function showQrCode(Request $request): JsonResponse
     {
         /** @var HasTwoFactorInterface $user */
-        $user = $request->user('api');
+        $user = $request->user();
 
         if (!$user->two_factor_settings->isAuthenticator() || !$user->two_factor_settings->getAuthenticatorSecret()) {
             return response()->json(['message' => 'Two factor authentication is not enabled'], 400);
@@ -90,7 +90,7 @@ class TwoFactorApiController extends Controller
     public function showRecoveryCodes(Request $request): JsonResponse
     {
         /** @var HasTwoFactorInterface $user */
-        $user = $request->user('api');
+        $user = $request->user();
 
         if (!$user->two_factor_settings->isAuthenticator() || !$user->two_factor_settings->getRecoveryCodes()) {
             return response()->json(['message' => 'Two factor authentication is not enabled'], 400);
@@ -104,7 +104,7 @@ class TwoFactorApiController extends Controller
     public function confirm(Request $request): JsonResponse
     {
         /** @var HasTwoFactorInterface $user */
-        $user = $request->user('api');
+        $user = $request->user();
 
         if (!$user->two_factor_settings->isAuthenticator() || !$user->two_factor_settings->getAuthenticatorSecret()) {
             return response()->json(['message' => 'Two factor authentication is not enabled'], 400);

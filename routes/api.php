@@ -4,7 +4,7 @@ use BuckhamDuffy\LaravelTwoFactor\Http\Controllers\TwoFactorApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/api/two-factor')
-    ->middleware(['api', 'auth:api'])
+    ->middleware(['web', 'auth'])
     ->group(function () {
         Route::get('/', [TwoFactorApiController::class, 'show']);
         Route::put('/', [TwoFactorApiController::class, 'update']);

@@ -217,7 +217,7 @@ export default {
         },
         fetchRecoveryCodes() {
             return new Promise((resolve) => {
-                if(!this.twoFactorSettings.types.recovery_codes) {
+                if(!this.twoFactorSettings.types.recovery_codes || !this.isEnabled) {
                     this.recoveryCodes = null;
                     return resolve()
                 }
