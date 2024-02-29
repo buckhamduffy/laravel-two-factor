@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.1 - 2024-02-29
+#### Bug Fixes
+- only show recovery codes if enabled - (1d13177) - Aaron Florey
+
+- - -
+
 ## v0.1.0 - 2024-02-29
 #### Features
 - improved how email works, add sms - (dd99d69) - Aaron Florey
