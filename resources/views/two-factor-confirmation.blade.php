@@ -7,13 +7,11 @@
             @if($type === 'authenticator')
                 <p>Please open your authenticator app to get the TOTP code.</p>
             @elseif($type === 'sms')
-                <p>An SMS has been sent to your phone with the code.</p>
+                <p>Please check your SMS for the code.</p>
             @elseif($type === 'email')
-                <p>An Email has been sent to you with the code.</p>
+                <p>Please check your Email for the code.</p>
             @endif
         </div>
-
-
 
         <input type="hidden" value="{{ $type }}" name="type">
 
@@ -35,10 +33,7 @@
                 </div>
             </div>
             {{ csrf_field() }}
-
             <hr>
-
-
         </fieldset>
     </form>
 
@@ -70,7 +65,7 @@
             </div>
         @endif
 
-        @if($type === 'email' && $can_resend_email)
+        @if($type === 'email' || $type === 'sms')
             <div class="col-12">
                 <form action="{{ route('two-factor-confirm.resend') }}" method="post">
                     <input type="hidden" value="{{ $type }}" name="type">
@@ -78,11 +73,23 @@
                     {!! csrf_field() !!}
 
                     <button type="submit" class="btn btn-dark btn-block">
-                        Re-send Code
+                        @if($type === 'email')
+                            Resend Email
+                        @elseif($type === 'sms')
+                            Resend SMS
+                        @endif
                     </button>
                 </form>
             </div>
         @endif
 
+        @if($other_types['recovery_codes'])
+            <div class="col-12">
+                <a href="{{ route('two-factor-recovery') }}"
+                   class="btn btn-dark btn-block">
+                    Use Recovery Code
+                </a>
+            </div>
+        @endif
     </div>
 @endsection

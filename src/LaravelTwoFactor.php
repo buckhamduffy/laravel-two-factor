@@ -12,6 +12,8 @@ use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BuckhamDuffy\LaravelTwoFactor\Mail\TwoFactorCodeMail;
+use BuckhamDuffy\LaravelTwoFactor\Events\SmsSendCodeEvent;
+use BuckhamDuffy\LaravelTwoFactor\Events\EmailSendCodeEvent;
 use BuckhamDuffy\LaravelTwoFactor\Interfaces\HasTwoFactorInterface;
 
 class LaravelTwoFactor
@@ -47,7 +49,8 @@ class LaravelTwoFactor
                 return false;
             }
 
-            return $user->two_factor_settings->isSms();
+            // SMS is not implemented yet
+            return false;
         }
 
         return false;
@@ -55,15 +58,30 @@ class LaravelTwoFactor
 
     public function verify(string $code, HasTwoFactorInterface $user, string $type): bool
     {
+        $result = false;
+
         if ($type === 'authenticator') {
-            return $this->verifyAuthenticator($code, $user);
+            $result = $this->verifyAuthenticator($code, $user);
         }
 
         if ($type === 'email') {
-            return $this->verifyEmail($code, $user);
+            $result = $this->verifyEmail($code, $user);
         }
 
-        return false;
+        if ($type === 'sms') {
+            $result = $this->verifySms($code, $user);
+        }
+
+        if ($result) {
+            $user->two_factor_settings = $user->two_factor_settings
+                ->setSmsCode(null)
+                ->setEmailCode(null)
+                ->setLastSmsSent(null)
+                ->setLastEmailSent(null);
+            $user->save();
+        }
+
+        return $result;
     }
 
     public function verifyAuthenticator(string $code, HasTwoFactorInterface $user): bool
@@ -82,10 +100,17 @@ class LaravelTwoFactor
         return (int) $code === $user->two_factor_settings->emailCode;
     }
 
+    public function verifySms(string $code, HasTwoFactorInterface $user): bool
+    {
+        return (int) $code === $user->two_factor_settings->smsCode;
+    }
+
     public function getType(?string $type, HasTwoFactorInterface $user): string
     {
-        if ($this->canShowType($type, $user)) {
-            return $type;
+        if ($type) {
+            if ($this->canShowType($type, $user)) {
+                return $type;
+            }
         }
 
         foreach (['authenticator', 'email', 'sms'] as $type) {
@@ -99,24 +124,43 @@ class LaravelTwoFactor
 
     public function sendMessage(string $type, HasTwoFactorInterface $user): void
     {
-        if ($type === 'sms') {
-            // TODO: Implement SMS
-            return;
-        }
-
         if ($type === 'email') {
             if (!$user->two_factor_settings->canResendEmail()) {
+                session()->flash('error', 'Email requested too recently, please try again soon.');
                 return;
             }
 
             $code = mt_rand(100000, 999999);
             $user->two_factor_settings = $user->two_factor_settings
+                ->setSmsCode(null)
                 ->setEmailCode($code)
                 ->setLastEmailSent(now());
 
             $user->save();
 
             Mail::to($user)->send(new TwoFactorCodeMail($code));
+            EmailSendCodeEvent::dispatch($code, $user);
+
+            session()->flash('success', 'Code has been sent.');
+        }
+
+        if ($type === 'sms') {
+            if (!$user->two_factor_settings->canResendSms()) {
+                session()->flash('error', 'SMS requested too recently, please try again soon.');
+                return;
+            }
+
+            $code = mt_rand(100000, 999999);
+            $user->two_factor_settings = $user->two_factor_settings
+                ->setSmsCode($code)
+                ->setEmailCode(null)
+                ->setLastSmsSent(now());
+
+            $user->save();
+
+            SmsSendCodeEvent::dispatch($code, $user);
+
+            session()->flash('success', 'Code has been sent.');
         }
     }
 

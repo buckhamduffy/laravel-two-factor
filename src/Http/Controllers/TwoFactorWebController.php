@@ -30,11 +30,11 @@ class TwoFactorWebController extends Controller
         return view('two-factor::two-factor-confirmation')
             ->with('type', $type)
             ->with('other_types', [
-                'authenticator' => $this->twoFactorService->canShowType('authenticator', $user, $type),
-                'email'         => $this->twoFactorService->canShowType('email', $user, $type),
-                'sms'           => $this->twoFactorService->canShowType('sms', $user, $type),
+                'authenticator'  => $this->twoFactorService->canShowType('authenticator', $user, $type),
+                'email'          => $this->twoFactorService->canShowType('email', $user, $type),
+                'sms'            => $this->twoFactorService->canShowType('sms', $user, $type),
+                'recovery_codes' => config('two-factor.enable.recovery_codes'),
             ])
-            ->with('can_resend_email', $user->two_factor_settings->canResendEmail())
             ->with('settings', $user->two_factor_settings);
     }
 
@@ -111,8 +111,6 @@ class TwoFactorWebController extends Controller
         ]);
 
         $this->twoFactorService->sendMessage($request->get('type'), $request->user());
-
-        session()->flash('success', 'Code has been sent.');
 
         return redirect()
             ->to(route('two-factor-confirm', ['type' => $request->get('type')]));

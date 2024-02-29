@@ -5,12 +5,12 @@
         <fieldset>
             <div class="form-group{{ $errors->has('code') ? ' has-error' : '' }}">
                 <div class="col-lg-12">
-                    <input type="number" name="code" value="{{ old('code') }}" class="form-control"
+                    <input type="text" name="code" value="{{ old('code') }}" class="form-control"
                            placeholder="Code">
                     @if ($errors->has('code'))
                         <span class="help-block">
-										<strong>{{ $errors->first('code') }}</strong>
-									</span>
+                            <strong>{{ $errors->first('code') }}</strong>
+                        </span>
                     @endif
                 </div>
             </div>

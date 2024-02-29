@@ -10,14 +10,19 @@ use PragmaRX\Google2FAQRCode\Google2FA;
 
 class UserTwoFactorSettings extends Data
 {
-    public ?Carbon $authenticator = null;
-    public ?Carbon $sms = null;
-    public ?Carbon $email = null;
     public ?string $recoveryCodes = null;
+
+    public ?Carbon $authenticator = null;
     public ?string $authenticatorSecret = null;
     public ?Carbon $authenticatorConfirmedAt = null;
+
     public ?int $emailCode = null;
     public ?Carbon $lastEmailSent = null;
+    public ?Carbon $email = null;
+
+    public ?int $smsCode = null;
+    public ?Carbon $lastSmsSent = null;
+    public ?Carbon $sms = null;
 
     public function isEnabled(bool $checkConfirmed = false): bool
     {
@@ -168,5 +173,26 @@ class UserTwoFactorSettings extends Data
         }
 
         return $this->lastEmailSent->addMinutes(5)->isPast();
+    }
+
+    public function setSmsCode(?int $smsCode): self
+    {
+        $this->smsCode = $smsCode;
+        return $this;
+    }
+
+    public function setLastSmsSent(?Carbon $lastSmsSent): self
+    {
+        $this->lastSmsSent = $lastSmsSent;
+        return $this;
+    }
+
+    public function canResendSms(): bool
+    {
+        if (!$this->lastSmsSent) {
+            return true;
+        }
+
+        return $this->lastSmsSent->addMinutes(5)->isPast();
     }
 }

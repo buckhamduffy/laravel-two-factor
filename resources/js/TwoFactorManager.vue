@@ -19,12 +19,12 @@
                 authentication. You may retrieve this token from your phone's Authenticator application or Email Inbox (if enabled).
             </p>
 
-            <div class="mt-5" v-if="recoveryCodes">
+            <div v-if="recoveryCodes" class="mt-5">
                 <p>Here are your recovery codes, if you get locked out of your account you may use one to get back in.</p>
                 <div class="row">
                     <div class="col-6">
                         <div class="row">
-                            <div class="col-6" v-for="code in recoveryCodes">
+                            <div v-for="code in recoveryCodes" class="col-6">
                                 <div class="p-3">
                                     {{ code }}
                                 </div>
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <div class="mt-5" v-if="twoFactorSettings.types.authenticator">
+            <div v-if="twoFactorSettings.types.authenticator" class="mt-5">
                 <h6><strong>Authenticator</strong></h6>
                 <b-button v-if="!twoFactorSettings.authenticator" variant="primary"
                           @click="setTwoFactor('authenticator', true)">
@@ -77,7 +77,7 @@
                 </div>
             </div>
 
-            <div class="mt-5" v-if="twoFactorSettings.types.email">
+            <div v-if="twoFactorSettings.types.email" class="mt-5">
                 <h6><strong>Email</strong></h6>
                 <b-button v-if="!twoFactorSettings.email" variant="primary"
                           @click="setTwoFactor('email', true)">
@@ -88,12 +88,23 @@
                     Disable Email 2FA
                 </b-button>
             </div>
+
+            <div v-if="twoFactorSettings.types.sms" class="mt-5">
+                <h6><strong>SMS</strong></h6>
+                <b-button v-if="!twoFactorSettings.sms" variant="primary"
+                          @click="setTwoFactor('sms', true)">
+                    Enable SMS 2FA
+                </b-button>
+                <b-button v-if="twoFactorSettings.sms" variant="danger"
+                          @click="setTwoFactor('sms', false)">
+                    Disable SMS 2FA
+                </b-button>
+            </div>
         </div>
     </b-overlay>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
 import axios from 'axios'
 import toastr from 'toastr'
 
@@ -128,7 +139,7 @@ export default {
     computed: {
         isEnabled() {
             if(this.twoFactorSettings.enforce) {
-                return true;
+                return true
             }
 
             return this.twoFactorSettings.enabled
@@ -198,7 +209,7 @@ export default {
         },
         fetchRecoveryCodes() {
             return axios.get('/api/two-factor/show-recovery-codes').then((rsp) => {
-                this.recoveryCodes = rsp.data
+                this.recoveryCodes = rsp.data.codes
             })
         },
         confirmAuthenticator() {
@@ -218,7 +229,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>

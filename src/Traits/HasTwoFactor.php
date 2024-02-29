@@ -2,8 +2,8 @@
 
 namespace BuckhamDuffy\LaravelTwoFactor\Traits;
 
-use BuckhamDuffy\LaravelTwoFactor\Support\UserTwoFactorSettings;
 use Illuminate\Database\Eloquent\Model;
+use BuckhamDuffy\LaravelTwoFactor\Support\UserTwoFactorSettings;
 
 /**
  * @phpstan-require-extends Model
