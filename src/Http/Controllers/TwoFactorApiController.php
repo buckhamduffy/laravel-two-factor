@@ -92,7 +92,7 @@ class TwoFactorApiController extends Controller
         /** @var HasTwoFactorInterface $user */
         $user = $request->user();
 
-        if (!$user->two_factor_settings->isAuthenticator() || !$user->two_factor_settings->getRecoveryCodes()) {
+        if (!$user->two_factor_settings->isEnabled() || !$user->two_factor_settings->getRecoveryCodes()) {
             return response()->json(['message' => 'Two factor authentication is not enabled'], 400);
         }
 
