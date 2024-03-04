@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.5 - 2024-03-04
+#### Bug Fixes
+- allow lower version of laravel-data - (424206b) - Aaron Florey
+
+- - -
+
 ## v0.1.4 - 2024-03-04
 #### Bug Fixes
 - allow laravel 9 - (e8fc5c0) - Aaron Florey
