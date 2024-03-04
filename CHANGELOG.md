@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.4 - 2024-03-04
+#### Bug Fixes
+- allow laravel 9 - (e8fc5c0) - Aaron Florey
+
+- - -
+
 ## v0.1.3 - 2024-02-29
 #### Bug Fixes
 - allow recovery codes when enabled - (0d4145a) - Aaron Florey
