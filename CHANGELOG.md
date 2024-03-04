@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.6 - 2024-03-04
+#### Bug Fixes
+- remove edocs from the email template - (d78a14e) - Aaron Florey
+
+- - -
+
 ## v0.1.5 - 2024-03-04
 #### Bug Fixes
 - allow lower version of laravel-data - (424206b) - Aaron Florey
