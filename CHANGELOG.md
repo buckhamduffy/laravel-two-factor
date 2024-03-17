@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.7 - 2024-03-17
+#### Bug Fixes
+- If inertia is installed, do an inertia redirect - (529d36a) - Aaron Florey
+
+- - -
+
 ## v0.1.6 - 2024-03-04
 #### Bug Fixes
 - remove edocs from the email template - (d78a14e) - Aaron Florey
