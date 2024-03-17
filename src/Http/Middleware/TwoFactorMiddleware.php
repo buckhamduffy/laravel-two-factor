@@ -27,6 +27,11 @@ class TwoFactorMiddleware
 
         if ($user->enforceTwoFactor() || $user->two_factor_settings->isEnabled(true)) {
             session()->flash('two_factor_initial', true);
+
+            if (class_exists(\Inertia\Inertia::class)) {
+                return \Inertia\Inertia::location(route('two-factor-confirm'));
+            }
+
             return redirect()->route('two-factor-confirm');
         }
 
