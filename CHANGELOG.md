@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.1.8 - 2024-04-30
+#### Bug Fixes
+- allow laravel 11 - (72a31e4) - Aaron Florey
+
+- - -
+
 ## v0.1.7 - 2024-03-17
 #### Bug Fixes
 - If inertia is installed, do an inertia redirect - (529d36a) - Aaron Florey
