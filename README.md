@@ -102,6 +102,32 @@ When a code is requested via SMS, an event will be dispatched that you can liste
     }
 ```
 
+### CustomThrottlesLogins
+This is a custom login throttler, that throttles based on the user's email address. 
+This is to prevent brute force attacks on the login page.
+
+First 5 attempts are allowed, then throttled for 5 minutes. 
+The 8th attempt will be locked out for 15 minutes. 
+Any subsequent attempts will be locked out for 1 hour.
+
+Attempts are reset after successful login, or 24 hours after the last attempt.
+
+```php
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use BuckhamDuffy\LaravelTwoFactor\Traits\CustomThrottlesLogins; 
+
+class LoginController extends Controller
+{
+    use AuthenticatesUsers;
+    use CustomThrottlesLogins {
+        CustomThrottlesLogins::hasTooManyLoginAttempts insteadof AuthenticatesUsers;
+        CustomThrottlesLogins::incrementLoginAttempts insteadof AuthenticatesUsers;
+        CustomThrottlesLogins::clearLoginAttempts insteadof AuthenticatesUsers;
+        CustomThrottlesLogins::sendLockoutResponse insteadof AuthenticatesUsers;
+    }
+}
+```
+
 ## Testing
 
 ```bash
