@@ -3,6 +3,12 @@
 - correct migration name - (8077b87) - Aaron Florey
 
 - - -
+## v0.2.0 - 2024-09-23
+#### Features
+- add CustomThrottlesLogins - (2cc8b6a) - Aaron Florey
+
+- - -
+
 ## v0.1.8 - 2024-04-30
 #### Bug Fixes
 - allow laravel 11 - (72a31e4) - Aaron Florey
